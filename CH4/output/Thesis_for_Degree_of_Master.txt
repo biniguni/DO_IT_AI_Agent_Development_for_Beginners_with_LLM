@@ -1,0 +1,3990 @@
+Thesis for Degree of Master
+Supervisor : Prof. Sunghoon Kwon
+Comparison of Model Selection
+Criteria for Neighborhood
+Selection Method in the
+Gaussian Graphical Models
+Submitted by
+Keon Ko
+February, 2024
+Department of Applied Statistics
+Graduate School of Konkuk University
+Comparison of Model Selection
+Criteria for Neighborhood
+Selection Method in the
+Gaussian Graphical Models
+A Master’s Thesis
+submitted to the Department of Applied Statistics
+and the Graduate School of Konkuk University
+in partial fulfillment of the
+requirements for the degree of
+Master of Arts in Statistics
+Submitted by
+Keon Ko
+October, 2023
+This certifies that the Thesis of
+Keon Ko is approved.
+Approved by Examination Committee
+Chairman
+Member
+Member
+December, 2023
+Graduate School of Konkuk University
+TABLE OF CONTENTS
+List of Tables . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ii
+List of Figures
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+iii
+ABSTRACT . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+iv
+Chapter 1 Introduction
+. . . . . . . . . . . . . . . . . . . . . . . .
+1
+Chapter 2 Graphical Models: Review
+. . . . . . . . . . . . . . . .
+4
+1. Graphical Models . . . . . . . . . . . . . . . . . . . . . . . .
+4
+2. Gaussian Graphical Models . . . . . . . . . . . . . . . . . .
+5
+Chapter 3 Estimation of the conditional independence
+. . . . . .
+8
+1. Neighborhood selection . . . . . . . . . . . . . . . . . . . .
+8
+2. Model selection criterion for neighborhood selection
+. . .
+9
+Chapter 4 Numerical Study . . . . . . . . . . . . . . . . . . . . . .
+11
+1. Simulation studies . . . . . . . . . . . . . . . . . . . . . . .
+11
+Chapter 5 Conclusion
+. . . . . . . . . . . . . . . . . . . . . . . . .
+30
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+31
+Abstract (in Korean) . . . . . . . . . . . . . . . . . . . . . . . . . . .
+34
+i
+List of Tables
+<Table 4-1>
+Average of the sensitivity with the LASSO under
+Model 1 situation . . . . . . . . . . . . . . . . . . . .
+14
+<Table 4-2>
+Average of the sensitivity with the SCAD under Model
+1 situation
+. . . . . . . . . . . . . . . . . . . . . . . .
+15
+<Table 4-3>
+Average of the specificity with the LASSO under
+Model 1 situation . . . . . . . . . . . . . . . . . . . .
+16
+<Table 4-4>
+Average of the specificity with the SCAD under Model
+1 situation
+. . . . . . . . . . . . . . . . . . . . . . . .
+17
+<Table 4-5>
+Average of the sensitivity with the LASSO under
+AR(2) situation
+. . . . . . . . . . . . . . . . . . . . .
+18
+<Table 4-6>
+Average of the sensitivity with the SCAD under AR(2)
+situation
+. . . . . . . . . . . . . . . . . . . . . . . . .
+19
+<Table 4-7>
+Average of the specificity with the LASSO under
+AR(2) situation
+. . . . . . . . . . . . . . . . . . . . .
+20
+<Table 4-8>
+Average of the specificity with the SCAD under AR(2)
+situation
+. . . . . . . . . . . . . . . . . . . . . . . . .
+21
+ii
+List of Figures
+<Figure 4-1> Sensitivity of AIC, BIC, and GIC3 when sample size
+= 100,200,300, and 400 in the Model 1 . . . . . . . . .
+22
+<Figure 4-2> Sensitivity of GIC4, GIC5, GIC6, and GIC7 when sam-
+ple size = 100,200,300, and 400 in the Model 1 . . . .
+23
+<Figure 4-3> Specificity of AIC, BIC, and GIC3 when sample size
+= 100,200,300, and 400 in the Model 1 . . . . . . . . .
+24
+<Figure 4-4> Specificity of GIC4, GIC5, GIC6, and GIC7 when sam-
+ple size = 100,200,300, and 400 in the Model 1 . . . .
+25
+<Figure 4-5> Sensitivity of AIC, BIC, and GIC3 when sample size
+= 100,200,300, and 400 in the AR(2) model . . . . . .
+26
+<Figure 4-6> Sensitivity of GIC4, GIC5, GIC6, and GIC7 when sam-
+ple size = 100,200,300, and 400 in the AR(2) model .
+27
+<Figure 4-7> Specificity of AIC, BIC, and GIC3 when sample size
+= 100,200,300, and 400 in the AR(2) model . . . . . .
+28
+<Figure 4-8> Specificity of GIC4, GIC5, GIC6, and GIC7 when sam-
+ple size = 100,200,300, and 400 in the AR(2) model .
+29
+iii
+ABSTRACT
+Comparison of Model Selection Criteria for
+Neighborhood Selection Method in the
+Gaussian Graphical Models
+Ko, Keon
+Department of Applied Statistics
+Graduate School of Konkuk University
+For the gaussian graphical models(GGMs), penalized estimators are gener-
+ally used in the high-dimensional situation. Representative estimator is neigh-
+borhood selection which is penalized regression based method. So there is the
+model selection problem for the neighborhood selection method. In this paper,
+we explore various model selection criteria based on the generalized informa-
+tion criterion(GIC) for the neighborhood selection method in the GGMs by the
+simulation study.
+keyword : Gaussian graphical model, Model selection criterion, Neighborhood selec-
+tion.
+iv
+Chapter 1. Introduction
+Graphical models are a probability model of multivariate variables, they are
+related to graph. The graphical models represent the relationships among the
+variables visually, it can be applied widely where the relationships are severely
+entangled. The relationships are expressed by edge of the graph, the edges
+related to the conditional dependencies between the nodes which correspond
+to variables.
+Furthermore if the random variables follow multivariate gaussian distri-
+bution, then it is gaussian graphical models (GGMs). In the GGMs, zero en-
+tries of the inverse covariance matrix correspond to conditional dependencies
+between the random variables given all other variables. This problem is co-
+variance selection (Dempster, 1972), related studies still continues these days.
+Especially under the high-dimensional situation where the number of vari-
+ables p is greater than the sample size n, the sample covariance matrix is singu-
+lar. Therefore it is hard to get the inverse covariance matrix estimate. So vari-
+ous methods have been introduced for the high dimensional situation, mainly
+there are two approaches.
+One of approaches is regression based method. Neighborhood selection
+method (Meinshausen and Bühlmann, 2006) proposed to identify the nonzero
+elements of the inverse covariance matrix by performing variable by variable
+LASSO regression (Tibshirani, 1996). Peng et al. (2009) proposed a joint re-
+gression model which simultaneously performs regression for all variables.
+Dantzig selector based estimator and CLIME estimator are suggested in Yuan
+(2010) and Cai et al. (2011). The proposed methods are implemented via linear
+programming.
+Another estimation method is penalized log-likelihood method which di-
+rectly estimates the inverse covariance matrix. Yuan and Lin (2007) proposed
+penalized likelihood method for model selection and estimation.
+To solve
+the optimization problem, they used maxdet algorithm. Banerjee et al. (2008)
+solved the optimization problem of the estimator which was proposed Yuan
+1
+and Lin (2007) by using block coordinate descent algorithm. Based on ap-
+proach in Banerjee et al. (2008), Friedman, Hastie, and Tibshirani (2008) pro-
+posed the Graphical LASSO (GLASSO) algorithm. Mazumder et al. (2012) an-
+alyze the theoretical properties of GLASSO. Under the penalized likelihood,
+non-convex penalties also have been considered by Fan and Feng (2009) in-
+stead of L1-penalty.
+Most of the estimators mentioned above need to select the tuning param-
+eters. Depending on which tuning parameter is selected, the complexity of
+the graph is different. Thus, tuning parameter selection is also important is-
+sue in the GGMs. However, there are few studies on the tuning parameters
+compared to estimation. Foygel and Drton (2010) studied the consistency of
+extended BIC (EBIC) for GGMs where both p and sample size increase. Their
+simulation gives the results of GLASSO with EBIC. Gao et al. (2012) stud-
+ied the consistency of the BIC for penalized MLE with SCAD. And they also
+considered the consistency of modified BIC when p tends to infinity as sam-
+ple size increases. Liu and Wang (2017) proposed TIGER which used penal-
+ized regression with SQRT-LASSO. It is asymptotically tuning free and non-
+asymptotically tuning insensitive. Recently, an estimator based on the gener-
+alized information criterion (Konishi and Kitagawa, 1996) has been proposed
+in Abbruzzo et al. (2019).
+In this paper, we focus on the comparing the model selection criteria based
+on the generalized information criterion (Konishi and Kitagawa, 1996; Kim et
+al., 2012) for the neighborhood selection method in the GGMs. For this pur-
+pose, first, we review the graphical models and the gaussian graphical models
+which follow the multivariate gaussian distribution. Next, we introduce the
+neighborhood selection method which is the penalized regression based esti-
+mator. Also we introduce the model selection criterion for the neighborhood
+selection. In addition, we provide simulation studies to compare the various
+information criteria for the neighborhood selection.
+The remain of this paper is organized as follows. Chapter 2, we briefly in-
+troduce the graphical models. Also we review the gaussian graphical models
+which is the representative graphical models. Chapter 3, we describe regres-
+sion based estimator and its model selection criteria. Chapter 4, we give some
+2
+simulation studies comparing with the performance of the neighborhood se-
+lection method with different model selection criteria.
+3
+Chapter 2. Graphical Models: Review
+In this section, we review the graphical models briefly. For the full details
+about the theory, recommend to see the following papers: Lauritzen (1996),
+Drton and Maathuis (2017), and Maathuis et al. (2018).
+1.
+Graphical Models
+A graphical model is useful tool which can represent the conditional depen-
+dencies among the random variables by using the graph (Lauritzen, 1996). Let
+G = (V, E) be a graph, where V = {1, . . . , p} is the set of nodes and E is the set
+of edges in V × V. In the graphical models, the nodes correspond to random
+variables and the edges represent the conditional dependencies between the
+variables (Drton and Maathuis, 2017). The graphical models can be either di-
+rected or undirected, depending on which way the edge is pointing. In other
+words, suppose the adjacency matrix A = {aij}, if the A is symmetric(i.e.,
+aij = aji), it is an undirected graph and if aij ̸= aji, it is directed graph. There-
+fore if we look at the relationship between variables through an undirected
+graph, it is called an undirected graphical models. While if we represent the
+relationship associated with causality through the directed graph, it is referred
+to a directed graphical models.
+When an undirected graph is given, then we can estimate the structure of
+undirected graph. Briefly there are two types of graph which is the marginal
+correlation graphs and the conditional independent graphs. The marginal cor-
+relation graph is the correlation between two variables. On the other hand,
+the conditional independent graph is the partial correlation between two vari-
+ables given a set of random variables. In this paper, we focus on the undirected
+graphical models and the conditional independent graph.
+Let X = (X1, . . . , Xp)T be a p-dimensional random vector correspond to the
+set of nodes V in the undirected graph G. A random vector X satisfies three
+different Markov properties with respect to G (Lauritzen, 1996; Bühlmann and
+4
+Van De Geer, 2011; Drton and Maathuis, 2017): pairwise, local, and global.
+A random vector X satisfies the pairwise Markov property relative to G if
+Xi ⊥Xj|XV\{i,j}
+for all (i, j) /∈E, i ̸= j, where V\{i, j} denote that belong to set of nodes V
+which do not contain nodes i and j. And we can say that X satisfies the local
+Markov property relative to G if
+Xi ⊥{Xk; k ∈V\{i, a ∈N(i)}}|XN(i)
+(1)
+for all k ∈V, where N(i) is the set of neighbors of node i. And all nodes
+included in N(i) are connected to node i. Let A, B and C be the subsets of
+V, X satisfies global Markov property relative to G if for any disjoint subsets
+(A, B, C) such that C separates A from B in G
+XA ⊥XB|XC.
+The three different Markov properties are equivalent and the proposition is
+proved in Lauritzen (1996).
+2.
+Gaussian Graphical Models
+One of the graphical models is Gaussian graphical models (GGMs). Suppose
+X be a p-dimensional random vector with X ∼N(0, Σ), where Σ is the sym-
+metric positive definite matrix, and Σ−1 = Θ = (θij) is the inverse covariance
+matrix. The GGMs are a conditional independent graph with a multivariate
+gaussian distribution. In the GGMs, it is well known that the inverse covari-
+ance matrix corresponds to conditional independence between the random
+variables. The density function of X is
+f (X; µ = 0, Θ) = (2π)−p/2 det(Θ)1/2 exp
+
+−1
+2XTΘX
+
+= (2π)−p/2 det(Θ)1/2 exp
+ 
+−1
+2 ∑
+i
+θiix2
+i −∑
+i<j
+θijxixj
+!
+∝∏
+i
+exp
+ θiix2
+i
+∏
+i<j
+exp
+ θijxixj
+
+.
+5
+A multivariate gaussian distribution factorizes with respect to an undirected
+graph G. Under a positive distribution, factorization relative to G implies the
+pairwise Markov property with respect to G by Hammersley-Clifford theorem
+Theorem 1 (Hammersley and Clifford) Suppose X ∈Rp is a random vector with
+positive density function with respect to a product measure. X satisfies the pairwise
+Markov property with respect to an undirected graph G if only and if X factorizes
+according to the graph G.
+From the multivariate gaussian distribution, terms of single variable Xi
+are the node potential. The pairs term of Xi and Xj is edge potential which
+corresponds to the off-diagonal of inverse covariance matrix, θij. GGMs are
+represented by the node and edge potentials. In addition, if θij = 0, then there
+is no edge.
+Let the covariance matrix and its inverse be a block matrix and partition X
+into Xi and a (p −1) vector Xj,
+Σ =
+ 
+σii
+Σij
+ΣT
+ij
+Σjj
+!
+,
+Θ =
+ 
+θii
+Θij
+ΘT
+ij
+Θjj
+!
+.
+By the Lemma of block matrix inversion,
+θii = (σii −ΣijΣ−1
+jj ΣT
+ij)−1.
+(2)
+Next, a multivariate gaussian distribution has a property as follows. The
+conditional distribution of Xi given the rest follows a normal with density is
+Xi|Xj ∼N(ΣijΣ−1
+jj Xj, Σii −ΣijΣ−1
+jj Σji).
+The conditional distribution also corresponds to linear regression coefficients.
+Suppose the true linear regression model for a random vector X is given as
+Xi =
+∑
+j∈V\{i}
+βijXj + ϵi,
+where Xi is a i-th column vector of X and it is dependent variable, Xj =
+{Xk; k ∈V\{i}} is a independent variable, βj ∈Rp−1 is a regression coeffi-
+cient, and ϵi is independent and identically distributed N(0, σ2
+i ). The regres-
+sion function also can be written as
+βij = ΣijΣ−1
+jj ,
+Var(ϵi) = σii −ΣijΣ−1
+jj ΣT
+ij.
+(3)
+6
+By the block matrix inversion (2) and the property of conditional distribution
+(3), we can take
+θii
+=
+(σii −ΣijΣ−1
+jj ΣT
+ij)−1
+=
+{Var(ϵi)}−1,
+Θij
+=
+−(σii −ΣijΣ−1
+jj ΣT
+ij)−1ΣijΣ−1
+jj
+=
+−{Var(ϵi)}−1ΣijΣ−1
+jj
+=
+−θiiβij.
+Therefore
+βij = −Θijθ−1
+ii .
+(4)
+Hence (4) implies that βij depends on the nonzero off-diagonal element of the
+inverse covariance matrix. And βij = 0 implies Xi ⊥Xj|XV\{i,j}. That is the
+zero element of the inverse covariance matrix corresponds to the conditionally
+independent (Uhler, 2017),
+(i, j) /∈E ⇐⇒Xi ⊥Xj|XV\{i,j} ⇐⇒Θij = Θji = 0 ⇐⇒βij = βji = 0. (5)
+In summary, non-edges in an undirected graph G, the conditional indepen-
+dent, zero elements in the inverse covariance matrix, and zero regression coef-
+ficients are equivalent in the GGMs through (5) (Uhler, 2017).
+7
+Chapter 3. Estimation of the conditional
+independence
+Representative estimator with GGMs is neighborhood selection method (Mein-
+shausen and Bühlmann, 2006) which is regression based estimator. Neighbor-
+hood selection performs penalized regression separately column by column.
+By performing the penalized regression, we can estimate conditional inde-
+pendence. Also through the existence of the edge, it is possible to identify
+the graphical model. In this section, we introduce the neighborhood selection
+models briefly.
+1.
+Neighborhood selection
+Neighborhood selection method estimates the zeros in the inverse covariance
+matrix by fitting a penalized regression that each variable used as the response
+and the rest used as the predictors. The goal of neighborhood selection is es-
+timating the neighborhoods of given variables. Neighborhood selection con-
+siders the Local Markov property and the multivariate gaussian distribution
+property.
+First, we recall N(i) which is the set of neighbors of a node i. All nodes
+included in N(i) are connected to node i. When a node i’s neighborhood N(i)
+is given, node i is conditional independent all the other variables except node
+i and N(i), i.e. (1). From (3), the nonzero regression coefficients for the true
+regression model of Xi is same for the variables that contained in the set of
+neighborhoods, so the set of neighborhoods N(i) can be written as
+N(i) = {j ∈V : βij ̸= 0}.
+(6)
+(6) implies that N(i) includes the best predictor of Xi with response variable
+Xi and predictors {Xj : j ∈V\{i}} in linear regression (Meinshausen and
+Bühlmann, 2006; Maathuis et al., 2018).
+8
+Therefore neighborhood selection method estimates the set of neighbor-
+hoods N(i). When the observations are given, the penalized regression esti-
+mate ˆβij is given by
+ˆβij = arg min
+βij
+ 
+1
+n||Xi −∑
+j̸=i
+Xjβij||2
+2 + ∑
+j̸=i
+J(|βij|)
+!
+,
+where J is a penalty function with a tuning parameter.
+And the nonzero ˆβij corresponds to the nonzero off-diagonal element of
+the precision matrix. The neighborhood estimate is written as
+ˆN(i) = {j ∈V : ˆβij ̸= 0}.
+The rule for estimating the ˆE follows AND/OR (Meinshausen and Bühlmann,
+2006),
+• OR rule:
+ˆEor = {(i, j) : i ∈ˆN(i) ∨j ∈ˆN(i)}
+• AND rule:
+ˆEand = {(i, j) : i ∈ˆN(i) ∧j ∈ˆN(i)},
+where i ̸= j.
+Originally, Meinshausen and Bühlmann (2006) used the LASSO which is
+the convex problem and makes the regression coefficient exactly zero. Other
+penalty has been considered in Wang et al. (2016). They proposed non-convex
+penalty based method. In this paper, we consider the LASSO and SCAD which
+is the non-convex problem.
+2.
+Model selection criterion for neighborhood selection
+As model selection is required for high dimensional data modeling, various
+model selection criteria have been proposed. The well-known model selection
+criteria such as the AIC (Akaike, 1998), the BIC (Schwarz, 1978) are introduced
+for a long time. Cross-validation also commonly used for the simplicity but it
+is known to overfit as the AIC.
+9
+The generalized information criterion (GIC) has been considered in Kon-
+ishi and Kitagawa (1996), and Kim et al. (2012). The GIC family includes not
+only AIC, BIC but also other information criteria. Especially, Kim et al. (2012)
+studied sufficient conditions of many information criteria based on the GIC.
+The tuning parameter controls the sparsity of the estimator in the neighbor-
+hood selection. To choose the tuning parameter, we used the model selection
+criterion based on the GIC. When σ is unknown, we may use the mean squared
+error of the full model. In this case, the GIC for the neighborhood selection is
+defined as
+GICNS
+λ (S) = log(||Xi −XS ˆβS||2/n) + λ
+n |S|,
+(7)
+where S is a subset of {1, . . . , i −1, i + 1, . . . , p}, XS is a sub-matrix of X−i that
+consists of columns Xk, k ∈S, βS is a sub-vector of β that consists of βk, k ∈S,
+ˆβS = arg min
+βS
+||Xi −XSβS||2
+2 + J(βS), || · || is the Euclidean norm, and λ is a
+preset positive sequence of the sample size n and model size p. The weight
+varies depending on the λ and n. The final estimator from the GIC is defined
+as
+ˆS =
+argmin
+S∈{1,...,i−1,i+1,...,p}
+GICNS
+λ (S).
+10
+Chapter 4. Numerical Study
+In this section, we present the results of simulation studies according to the
+model selection criteria AIC(= GIC1), BIC(= GIC2), GIC3, GIC4, GIC5, GIC6,
+and GIC7 for the neighborhood selection with the LASSO and SCAD. We ob-
+tained all the penalized estimators using R package glmnet and ncvreg.
+1.
+Simulation studies
+The simulation studies was based on the multivariate gaussian distribution
+with two graphical models. In Model 1, we made the matrix structure at ran-
+dom. Model 2 has been considered in Yuan and Lin (2007).
+• Model 1. Let K = (kij) be a p by p matrix, where i < j. We choose a
+nonzero positions of kij by {(p −1)p/2} ∗0.05 randomly. The signals
+of nonzero elements are given in sequences whose minimum value is
+0.3 and maximum value is 0.6. And then make K as symmetric matrix.
+Next, we calculate the absolute of minimum eigenvalue min(Λ) of K.
+Then we set the diagonal elements of inverse covariance matrix as Θ0
+ii =
+(| min(Λ)| + 0.05)Ip for the symmetric positive definite (Cai et al., 2016)
+and the off-diagonal elements as Θ0
+ij = K.
+• Model 2. AR(2): Θ0
+i,i = 1, Θ0
+i,i−1 = Θ0
+i−1,i = 0.5, and Θ0
+i,i−2 = Θ0
+i−2,i =
+0.25
+Each model, we generated n random samples of X from N(0, (Θ0)−1). And we
+set n ∈{100, 150, 200, 250, 300, 350, 400}, p ∈{100, 150, 200, 250, 300, 350, 400}
+for each simulation. We repeated the simulation 200 times.
+The main goal of the simulation is to compare the model selection criteria
+based on the GIC for the neighborhood selection. We compare the finite sam-
+ple performance of the GICs which have been considered in Kim et al. (2012),
+λs associated with GIC are given as
+• AIC(= GIC1) : λ1 = 2,
+11
+• BIC(= GIC2) : λ2 = log(n),
+• GIC3 : λ3 = p1/3,
+• GIC4 : λ4 = 2 log(p),
+• GIC5 : λ5 = 2{log(p) + log log(p)},
+• GIC6 : λ6 = log{log(n)} log(p),
+• GIC7 : λ7 = log(n) log(p).
+We calculated two measures for checking the performance: sensitivity and
+specificity which are defined as:
+Sensitivity (SEN) =
+TP
+TP + FN,
+Specificity (SPC) =
+TN
+TN + FP,
+where TP = ∑i<j I( ˆΘij ̸= 0, Θij ̸= 0), FP = ∑i<j I( ˆΘij ̸= 0, Θij = 0), TN =
+∑i<j I( ˆΘij = 0, Θij = 0), and FN = ∑i<j I( ˆΘij = 0, Θij ̸= 0).
+Tables and figures summarize the results. We first discuss SEN of Model 1:
+• For the GIC3,GIC4,GIC5,GIC6, and GIC7, SEN increases as n increases in
+both the LASSO and SCAD. However, as p increases while maintaining
+n fixed, SEN decreases. As GIC3 has lower weight, it has higher SEN
+than GIC4,GIC5,GIC6, and GIC7. On the other hand, GIC7 which has the
+largest weight, has the lowest SEN. Among the LASSO and SCAD, the
+SCAD produces the larger SEN than the LASSO. One characteristic is
+that GIC3 has the larger SEN when n = p, particularly at n < 200.
+• For the AIC, the SEN increases as n increases in both the LASSO and
+SCAD. In the case of LASSO, SEN decreases starting with n = p. In the
+case of SCAD, SEN decreases up to n > p, increases where n = p, and
+decreases again when n < p. Among the LASSO and SCAD, the LASSO
+produces the larger SEN than SCAD.
+• For the BIC, in the case of LASSO, SEN increases where n = p when
+n ≤200. The SEN increases as n increases when n ≥250. In the case
+of SCAD, on the other hand, SEN increases as n increases overall. But
+n ≤300, SEN decreases up to n > p, increases where n = p. Among the
+12
+LASSO and SCAD, the SCAD produces the larger SEN than the LASSO
+except n ≤150.
+Second, we discuss SPC of Model 1:
+• For the GIC5 and GIC7, there is no change with SPC converging to 1. For
+the GIC4 and GIC6, also SPC converging to 1 when the weight which
+depends on n and p is larger. This implies SPC converges to 1 if the
+weight is greater than a certain strength. Strength is different on the
+situation, because it depends on n and p.
+• For the AIC, while SEN converges to 1, SPC is lower than other GICs.
+This implies AIC tends to overfit. And if n > p, based on the same
+situation as n and p, SPC decreases. But if n < p, SPC increases.
+• For the BIC and GIC3, overall, SPC increases as n increases in both the
+LASSO and SCAD. However, SPC drops when n = p abruptly. Among
+the LASSO and SCAD, the LASSO produces the larger SPC than the
+SCAD except for the case of n ≤150 in BIC.
+Next, the results in the AR(2) model are not very different patterns from the
+Model 1. One difference is SEN converge to 1 faster than Model 1. For the
+details, refer to <Table 4-5>, <Table 4-6>, <Table 4-7>, <Table 4-8>, <Figure
+4-5>, <Figure 4-6>, <Figure 4-7>, and <Figure 4-8>.
+To sum up, (a) for all GICs, SEN increases as increases in both the LASSO
+and SCAD. Also, the larger weight of the GIC, the lower SEN and the SEN
+increases slowly even if n increases. And in GIC3, GIC4, GIC5, GIC6, and GIC7,
+SCAD has the higher SEN than LASSO. (b) SPC converges to 1 if the weight
+is greater than a certain strength which depends on n and p. However, for the
+AIC, BIC, and GIC3, SPC decreases when n = p.
+13
+<Table 4-1>: Average of the sensitivity with the LASSO under Model 1 situa-
+tion
+Sensitivity
+n
+p
+AIC
+BIC
+GIC3
+GIC4
+GIC5
+GIC6
+GIC7
+100
+100
+1.000
+0.958
+0.956
+0.385
+0.265
+0.510
+0.089
+150
+0.888
+0.783
+0.472
+0.163
+0.092
+0.254
+0.020
+200
+0.821
+0.802
+0.319
+0.078
+0.039
+0.138
+0.007
+250
+0.763
+0.757
+0.169
+0.040
+0.020
+0.076
+0.003
+300
+0.708
+0.705
+0.089
+0.022
+0.010
+0.045
+0.001
+350
+0.659
+0.657
+0.053
+0.013
+0.006
+0.028
+0.001
+400
+0.615
+0.614
+0.034
+0.008
+0.004
+0.019
+0.000
+150
+100
+0.972
+0.799
+0.818
+0.610
+0.484
+0.692
+0.186
+150
+1.000
+0.877
+0.805
+0.347
+0.222
+0.446
+0.047
+200
+0.913
+0.507
+0.429
+0.178
+0.101
+0.259
+0.018
+250
+0.868
+0.561
+0.290
+0.102
+0.053
+0.159
+0.007
+300
+0.825
+0.684
+0.186
+0.058
+0.029
+0.097
+0.004
+350
+0.784
+0.720
+0.123
+0.037
+0.018
+0.063
+0.002
+400
+0.747
+0.715
+0.082
+0.024
+0.011
+0.042
+0.001
+200
+100
+0.980
+0.876
+0.896
+0.754
+0.654
+0.802
+0.296
+150
+0.981
+0.760
+0.759
+0.514
+0.368
+0.598
+0.090
+200
+1.000
+0.768
+0.635
+0.301
+0.183
+0.392
+0.031
+250
+0.926
+0.511
+0.432
+0.180
+0.100
+0.254
+0.015
+300
+0.890
+0.420
+0.310
+0.114
+0.059
+0.169
+0.007
+350
+0.857
+0.364
+0.212
+0.071
+0.036
+0.109
+0.004
+400
+0.826
+0.395
+0.149
+0.048
+0.023
+0.075
+0.002
+250
+100
+0.989
+0.919
+0.936
+0.849
+0.778
+0.875
+0.417
+150
+0.976
+0.831
+0.840
+0.650
+0.516
+0.712
+0.138
+200
+0.986
+0.727
+0.710
+0.442
+0.293
+0.523
+0.051
+250
+1.000
+0.680
+0.564
+0.276
+0.162
+0.356
+0.023
+300
+0.932
+0.526
+0.433
+0.185
+0.101
+0.251
+0.013
+350
+0.904
+0.434
+0.316
+0.116
+0.061
+0.166
+0.007
+400
+0.877
+0.363
+0.230
+0.080
+0.041
+0.117
+0.004
+300
+100
+0.994
+0.951
+0.964
+0.906
+0.856
+0.921
+0.535
+150
+0.983
+0.881
+0.891
+0.751
+0.640
+0.793
+0.197
+200
+0.975
+0.797
+0.792
+0.566
+0.411
+0.635
+0.076
+250
+0.992
+0.701
+0.666
+0.391
+0.244
+0.469
+0.035
+300
+1.000
+0.633
+0.540
+0.260
+0.146
+0.333
+0.017
+350
+0.937
+0.528
+0.422
+0.179
+0.097
+0.237
+0.011
+400
+0.913
+0.454
+0.325
+0.125
+0.065
+0.171
+0.007
+350
+100
+0.996
+0.966
+0.976
+0.935
+0.903
+0.946
+0.637
+150
+0.988
+0.916
+0.926
+0.824
+0.736
+0.852
+0.265
+200
+0.978
+0.845
+0.846
+0.667
+0.520
+0.719
+0.104
+250
+0.979
+0.771
+0.751
+0.506
+0.343
+0.575
+0.049
+300
+0.995
+0.688
+0.636
+0.356
+0.215
+0.429
+0.025
+350
+1.000
+0.609
+0.518
+0.243
+0.133
+0.308
+0.015
+400
+0.939
+0.526
+0.410
+0.172
+0.091
+0.224
+0.009
+400
+100
+0.998
+0.978
+0.985
+0.956
+0.933
+0.963
+0.707
+150
+0.992
+0.937
+0.947
+0.869
+0.805
+0.888
+0.337
+200
+0.983
+0.882
+0.886
+0.746
+0.621
+0.783
+0.138
+250
+0.977
+0.817
+0.806
+0.596
+0.432
+0.652
+0.066
+300
+0.983
+0.741
+0.705
+0.441
+0.276
+0.508
+0.034
+350
+0.997
+0.674
+0.606
+0.325
+0.187
+0.391
+0.019
+400
+1.000
+0.604
+0.503
+0.234
+0.125
+0.292
+0.012
+14
+<Table 4-2>: Average of the sensitivity with the SCAD under Model 1 situa-
+tion
+Sensitivity
+n
+p
+AIC
+BIC
+GIC3
+GIC4
+GIC5
+GIC6
+GIC7
+100
+100
+0.991
+0.975
+0.974
+0.451
+0.309
+0.724
+0.138
+150
+0.741
+0.725
+0.705
+0.203
+0.126
+0.319
+0.040
+200
+0.630
+0.620
+0.605
+0.105
+0.058
+0.252
+0.016
+250
+0.540
+0.531
+0.518
+0.055
+0.029
+0.225
+0.008
+300
+0.469
+0.460
+0.447
+0.032
+0.015
+0.205
+0.003
+350
+0.413
+0.404
+0.392
+0.018
+0.009
+0.185
+0.002
+400
+0.367
+0.358
+0.345
+0.012
+0.005
+0.163
+0.001
+150
+100
+0.924
+0.800
+0.819
+0.635
+0.525
+0.702
+0.247
+150
+0.991
+0.954
+0.929
+0.396
+0.278
+0.525
+0.083
+200
+0.772
+0.737
+0.629
+0.228
+0.139
+0.314
+0.032
+250
+0.693
+0.678
+0.603
+0.136
+0.076
+0.205
+0.015
+300
+0.626
+0.615
+0.553
+0.079
+0.041
+0.128
+0.007
+350
+0.563
+0.554
+0.496
+0.049
+0.025
+0.085
+0.004
+400
+0.509
+0.500
+0.442
+0.032
+0.015
+0.058
+0.002
+200
+100
+0.959
+0.871
+0.891
+0.768
+0.683
+0.808
+0.368
+150
+0.912
+0.772
+0.772
+0.562
+0.435
+0.635
+0.136
+200
+0.991
+0.924
+0.839
+0.362
+0.239
+0.449
+0.052
+250
+0.788
+0.705
+0.510
+0.232
+0.139
+0.311
+0.025
+300
+0.728
+0.699
+0.443
+0.152
+0.084
+0.216
+0.013
+350
+0.671
+0.654
+0.395
+0.095
+0.050
+0.141
+0.007
+400
+0.618
+0.606
+0.353
+0.063
+0.031
+0.098
+0.004
+250
+100
+0.978
+0.918
+0.933
+0.859
+0.803
+0.881
+0.499
+150
+0.940
+0.836
+0.843
+0.692
+0.580
+0.741
+0.206
+200
+0.909
+0.749
+0.733
+0.507
+0.370
+0.579
+0.083
+250
+0.990
+0.883
+0.728
+0.343
+0.220
+0.423
+0.038
+300
+0.797
+0.648
+0.501
+0.241
+0.140
+0.314
+0.021
+350
+0.747
+0.686
+0.387
+0.154
+0.084
+0.214
+0.011
+400
+0.700
+0.671
+0.299
+0.106
+0.055
+0.152
+0.007
+300
+100
+0.989
+0.949
+0.960
+0.913
+0.875
+0.926
+0.619
+150
+0.962
+0.884
+0.893
+0.786
+0.699
+0.815
+0.282
+200
+0.926
+0.810
+0.805
+0.630
+0.498
+0.684
+0.120
+250
+0.911
+0.731
+0.701
+0.468
+0.322
+0.536
+0.057
+300
+0.990
+0.835
+0.640
+0.331
+0.202
+0.405
+0.027
+350
+0.803
+0.611
+0.491
+0.235
+0.135
+0.302
+0.016
+400
+0.760
+0.637
+0.394
+0.166
+0.089
+0.222
+0.010
+350
+100
+0.994
+0.967
+0.974
+0.943
+0.918
+0.950
+0.710
+150
+0.976
+0.918
+0.926
+0.850
+0.785
+0.871
+0.363
+200
+0.947
+0.855
+0.856
+0.723
+0.608
+0.760
+0.160
+250
+0.918
+0.792
+0.776
+0.582
+0.436
+0.637
+0.077
+300
+0.915
+0.724
+0.682
+0.439
+0.290
+0.506
+0.040
+350
+0.989
+0.783
+0.591
+0.314
+0.185
+0.381
+0.022
+400
+0.804
+0.598
+0.482
+0.228
+0.126
+0.288
+0.013
+400
+100
+0.997
+0.978
+0.984
+0.963
+0.945
+0.966
+0.784
+150
+0.984
+0.939
+0.946
+0.891
+0.844
+0.904
+0.450
+200
+0.963
+0.890
+0.893
+0.790
+0.700
+0.817
+0.213
+250
+0.937
+0.834
+0.825
+0.667
+0.533
+0.709
+0.102
+300
+0.912
+0.773
+0.744
+0.528
+0.366
+0.585
+0.051
+350
+0.920
+0.716
+0.661
+0.409
+0.257
+0.474
+0.029
+400
+0.988
+0.744
+0.573
+0.304
+0.174
+0.367
+0.017
+15
+<Table 4-3>: Average of the specificity with the LASSO under Model 1 situa-
+tion
+Specificity
+n
+p
+AIC
+BIC
+GIC3
+GIC4
+GIC5
+GIC6
+GIC7
+100
+100
+0.000
+0.121
+0.126
+0.994
+0.998
+0.974
+1.000
+150
+0.244
+0.500
+0.908
+0.998
+0.999
+0.995
+1.000
+200
+0.371
+0.414
+0.927
+0.999
+1.000
+0.998
+1.000
+250
+0.466
+0.477
+0.976
+1.000
+1.000
+0.999
+1.000
+300
+0.537
+0.542
+0.995
+1.000
+1.000
+0.999
+1.000
+350
+0.592
+0.594
+0.998
+1.000
+1.000
+0.999
+1.000
+400
+0.635
+0.637
+0.999
+1.000
+1.000
+1.000
+1.000
+150
+100
+0.375
+0.965
+0.959
+0.990
+0.995
+0.984
+0.999
+150
+0.000
+0.354
+0.522
+0.995
+0.998
+0.992
+1.000
+200
+0.205
+0.968
+0.987
+0.998
+0.999
+0.996
+1.000
+250
+0.298
+0.788
+0.992
+0.999
+1.000
+0.997
+1.000
+300
+0.376
+0.593
+0.995
+0.999
+1.000
+0.999
+1.000
+350
+0.441
+0.536
+0.997
+1.000
+1.000
+0.999
+1.000
+400
+0.494
+0.539
+0.998
+1.000
+1.000
+0.999
+1.000
+200
+100
+0.625
+0.964
+0.954
+0.986
+0.992
+0.981
+0.999
+150
+0.178
+0.970
+0.970
+0.992
+0.996
+0.988
+1.000
+200
+0.000
+0.619
+0.875
+0.996
+0.998
+0.993
+1.000
+250
+0.187
+0.982
+0.988
+0.998
+0.999
+0.996
+1.000
+300
+0.259
+0.983
+0.992
+0.999
+1.000
+0.997
+1.000
+350
+0.323
+0.958
+0.995
+0.999
+1.000
+0.998
+1.000
+400
+0.380
+0.881
+0.997
+0.999
+1.000
+0.999
+1.000
+250
+100
+0.693
+0.962
+0.950
+0.983
+0.989
+0.978
+0.998
+150
+0.534
+0.967
+0.964
+0.989
+0.994
+0.985
+0.999
+200
+0.066
+0.972
+0.975
+0.994
+0.997
+0.991
+1.000
+250
+0.000
+0.822
+0.976
+0.996
+0.999
+0.994
+1.000
+300
+0.182
+0.982
+0.989
+0.998
+0.999
+0.996
+1.000
+350
+0.235
+0.986
+0.993
+0.999
+0.999
+0.998
+1.000
+400
+0.290
+0.988
+0.995
+0.999
+1.000
+0.998
+1.000
+300
+100
+0.721
+0.961
+0.947
+0.980
+0.987
+0.976
+0.998
+150
+0.651
+0.965
+0.961
+0.987
+0.992
+0.983
+0.999
+200
+0.402
+0.970
+0.971
+0.991
+0.996
+0.988
+1.000
+250
+0.027
+0.975
+0.979
+0.995
+0.998
+0.992
+1.000
+300
+0.000
+0.931
+0.985
+0.997
+0.999
+0.995
+1.000
+350
+0.178
+0.983
+0.990
+0.998
+0.999
+0.997
+1.000
+400
+0.223
+0.985
+0.993
+0.998
+0.999
+0.998
+1.000
+350
+100
+0.737
+0.962
+0.947
+0.979
+0.986
+0.975
+0.997
+150
+0.702
+0.964
+0.958
+0.984
+0.991
+0.981
+0.999
+200
+0.597
+0.968
+0.967
+0.989
+0.994
+0.986
+1.000
+250
+0.265
+0.972
+0.975
+0.993
+0.997
+0.990
+1.000
+300
+0.013
+0.976
+0.982
+0.995
+0.998
+0.993
+1.000
+350
+0.000
+0.970
+0.987
+0.997
+0.999
+0.995
+1.000
+400
+0.175
+0.983
+0.991
+0.998
+0.999
+0.997
+1.000
+400
+100
+0.742
+0.962
+0.945
+0.978
+0.985
+0.974
+0.997
+150
+0.720
+0.963
+0.956
+0.982
+0.989
+0.979
+0.999
+200
+0.671
+0.966
+0.965
+0.987
+0.993
+0.984
+0.999
+250
+0.521
+0.970
+0.972
+0.991
+0.995
+0.988
+1.000
+300
+0.152
+0.974
+0.979
+0.994
+0.997
+0.992
+1.000
+350
+0.007
+0.977
+0.984
+0.996
+0.998
+0.994
+1.000
+400
+0.000
+0.979
+0.988
+0.997
+0.999
+0.996
+1.000
+16
+<Table 4-4>: Average of the specificity with the SCAD under Model 1 situation
+Specificity
+n
+p
+AIC
+BIC
+GIC3
+GIC4
+GIC5
+GIC6
+GIC7
+100
+100
+0.008
+0.055
+0.057
+0.931
+0.996
+0.566
+0.999
+150
+0.496
+0.526
+0.561
+0.995
+0.998
+0.974
+1.000
+200
+0.601
+0.617
+0.639
+0.998
+0.999
+0.946
+1.000
+250
+0.671
+0.685
+0.701
+0.999
+1.000
+0.925
+1.000
+300
+0.721
+0.733
+0.748
+0.999
+1.000
+0.919
+1.000
+350
+0.756
+0.768
+0.782
+1.000
+1.000
+0.920
+1.000
+400
+0.785
+0.796
+0.809
+1.000
+1.000
+0.926
+1.000
+150
+100
+0.404
+0.941
+0.922
+0.987
+0.994
+0.978
+0.999
+150
+0.009
+0.116
+0.182
+0.992
+0.997
+0.913
+1.000
+200
+0.486
+0.570
+0.762
+0.996
+0.998
+0.991
+1.000
+250
+0.563
+0.592
+0.707
+0.997
+0.999
+0.994
+1.000
+300
+0.620
+0.639
+0.717
+0.999
+1.000
+0.996
+1.000
+350
+0.667
+0.682
+0.745
+0.999
+1.000
+0.997
+1.000
+400
+0.703
+0.716
+0.773
+0.999
+1.000
+0.998
+1.000
+200
+100
+0.501
+0.956
+0.939
+0.985
+0.992
+0.978
+0.999
+150
+0.334
+0.948
+0.948
+0.989
+0.995
+0.983
+1.000
+200
+0.010
+0.201
+0.409
+0.994
+0.997
+0.986
+1.000
+250
+0.488
+0.698
+0.953
+0.996
+0.999
+0.993
+1.000
+300
+0.547
+0.608
+0.920
+0.998
+0.999
+0.995
+1.000
+350
+0.594
+0.623
+0.892
+0.999
+0.999
+0.997
+1.000
+400
+0.634
+0.654
+0.885
+0.999
+1.000
+0.998
+1.000
+250
+100
+0.551
+0.962
+0.946
+0.984
+0.991
+0.979
+0.999
+150
+0.444
+0.957
+0.953
+0.987
+0.994
+0.982
+1.000
+200
+0.282
+0.954
+0.961
+0.991
+0.996
+0.987
+1.000
+250
+0.011
+0.317
+0.670
+0.995
+0.998
+0.991
+1.000
+300
+0.502
+0.852
+0.977
+0.996
+0.999
+0.994
+1.000
+350
+0.540
+0.673
+0.982
+0.998
+0.999
+0.996
+1.000
+400
+0.581
+0.636
+0.983
+0.998
+0.999
+0.997
+1.000
+300
+100
+0.590
+0.967
+0.953
+0.984
+0.990
+0.980
+0.999
+150
+0.493
+0.961
+0.955
+0.985
+0.992
+0.981
+0.999
+200
+0.402
+0.959
+0.961
+0.989
+0.995
+0.984
+1.000
+250
+0.239
+0.958
+0.968
+0.992
+0.997
+0.989
+1.000
+300
+0.012
+0.458
+0.867
+0.995
+0.998
+0.992
+1.000
+350
+0.510
+0.931
+0.982
+0.996
+0.999
+0.994
+1.000
+400
+0.544
+0.798
+0.987
+0.998
+0.999
+0.996
+1.000
+350
+100
+0.618
+0.971
+0.958
+0.985
+0.990
+0.982
+0.999
+150
+0.528
+0.963
+0.956
+0.984
+0.991
+0.980
+0.999
+200
+0.456
+0.961
+0.961
+0.987
+0.993
+0.983
+1.000
+250
+0.369
+0.960
+0.966
+0.990
+0.995
+0.987
+1.000
+300
+0.203
+0.961
+0.972
+0.993
+0.997
+0.990
+1.000
+350
+0.013
+0.601
+0.951
+0.995
+0.998
+0.993
+1.000
+400
+0.517
+0.956
+0.984
+0.997
+0.999
+0.995
+1.000
+400
+100
+0.639
+0.974
+0.962
+0.985
+0.990
+0.983
+0.999
+150
+0.552
+0.965
+0.958
+0.984
+0.990
+0.981
+0.999
+200
+0.489
+0.962
+0.960
+0.985
+0.992
+0.982
+1.000
+250
+0.429
+0.961
+0.965
+0.988
+0.994
+0.985
+1.000
+300
+0.337
+0.963
+0.970
+0.992
+0.996
+0.989
+1.000
+350
+0.175
+0.964
+0.976
+0.994
+0.997
+0.991
+1.000
+400
+0.014
+0.721
+0.976
+0.996
+0.998
+0.994
+1.000
+17
+<Table 4-5>: Average of the sensitivity with the LASSO under AR(2) situation
+Sensitivity
+n
+p
+AIC
+BIC
+GIC3
+GIC4
+GIC5
+GIC6
+GIC7
+100
+100
+1.000
+0.975
+0.974
+0.465
+0.316
+0.589
+0.058
+150
+0.964
+0.884
+0.668
+0.393
+0.255
+0.508
+0.033
+200
+0.952
+0.948
+0.623
+0.338
+0.207
+0.452
+0.021
+250
+0.942
+0.942
+0.552
+0.296
+0.173
+0.413
+0.014
+300
+0.934
+0.933
+0.487
+0.268
+0.153
+0.383
+0.010
+350
+0.925
+0.925
+0.446
+0.247
+0.137
+0.359
+0.007
+400
+0.918
+0.918
+0.415
+0.225
+0.122
+0.335
+0.006
+150
+100
+0.992
+0.860
+0.876
+0.724
+0.630
+0.776
+0.231
+150
+1.000
+0.944
+0.909
+0.658
+0.556
+0.713
+0.157
+200
+0.985
+0.795
+0.760
+0.619
+0.520
+0.676
+0.129
+250
+0.981
+0.796
+0.721
+0.586
+0.485
+0.643
+0.100
+300
+0.979
+0.872
+0.694
+0.563
+0.458
+0.623
+0.080
+350
+0.977
+0.936
+0.666
+0.542
+0.437
+0.602
+0.065
+400
+0.975
+0.960
+0.646
+0.523
+0.415
+0.586
+0.056
+200
+100
+0.997
+0.936
+0.952
+0.855
+0.793
+0.885
+0.462
+150
+0.998
+0.914
+0.914
+0.803
+0.738
+0.835
+0.361
+200
+1.000
+0.932
+0.893
+0.767
+0.700
+0.801
+0.301
+250
+0.993
+0.876
+0.847
+0.735
+0.668
+0.774
+0.278
+300
+0.992
+0.863
+0.822
+0.715
+0.649
+0.753
+0.245
+350
+0.991
+0.851
+0.799
+0.697
+0.631
+0.736
+0.214
+400
+0.991
+0.843
+0.782
+0.682
+0.616
+0.721
+0.198
+250
+100
+0.999
+0.973
+0.982
+0.933
+0.892
+0.947
+0.648
+150
+0.999
+0.963
+0.965
+0.898
+0.850
+0.917
+0.559
+200
+0.999
+0.953
+0.948
+0.870
+0.820
+0.892
+0.497
+250
+1.000
+0.951
+0.933
+0.847
+0.794
+0.871
+0.448
+300
+0.997
+0.933
+0.911
+0.827
+0.770
+0.856
+0.431
+350
+0.996
+0.925
+0.897
+0.813
+0.755
+0.842
+0.398
+400
+0.996
+0.919
+0.884
+0.798
+0.740
+0.828
+0.376
+300
+100
+1.000
+0.990
+0.994
+0.971
+0.949
+0.978
+0.782
+150
+1.000
+0.985
+0.987
+0.954
+0.927
+0.963
+0.708
+200
+1.000
+0.981
+0.980
+0.936
+0.903
+0.948
+0.654
+250
+1.000
+0.976
+0.972
+0.922
+0.887
+0.936
+0.611
+300
+1.000
+0.973
+0.963
+0.908
+0.870
+0.924
+0.574
+350
+0.998
+0.967
+0.954
+0.900
+0.855
+0.918
+0.559
+400
+0.998
+0.963
+0.946
+0.889
+0.842
+0.908
+0.537
+350
+100
+1.000
+0.996
+0.997
+0.989
+0.980
+0.991
+0.869
+150
+1.000
+0.995
+0.995
+0.981
+0.969
+0.985
+0.812
+200
+1.000
+0.992
+0.992
+0.971
+0.955
+0.977
+0.767
+250
+1.000
+0.990
+0.989
+0.964
+0.944
+0.971
+0.733
+300
+1.000
+0.988
+0.985
+0.957
+0.936
+0.966
+0.705
+350
+1.000
+0.987
+0.982
+0.949
+0.925
+0.959
+0.677
+400
+0.999
+0.984
+0.976
+0.946
+0.916
+0.956
+0.659
+400
+100
+1.000
+0.999
+0.999
+0.995
+0.991
+0.996
+0.930
+150
+1.000
+0.998
+0.998
+0.992
+0.987
+0.994
+0.893
+200
+1.000
+0.997
+0.997
+0.989
+0.981
+0.991
+0.852
+250
+1.000
+0.996
+0.996
+0.984
+0.975
+0.987
+0.824
+300
+1.000
+0.996
+0.995
+0.981
+0.971
+0.985
+0.801
+350
+1.000
+0.994
+0.993
+0.977
+0.965
+0.981
+0.779
+400
+1.000
+0.994
+0.992
+0.974
+0.960
+0.979
+0.757
+18
+<Table 4-6>: Average of the sensitivity with the SCAD under AR(2) situation
+Sensitivity
+n
+p
+AIC
+BIC
+GIC3
+GIC4
+GIC5
+GIC6
+GIC7
+100
+100
+0.996
+0.991
+0.991
+0.744
+0.597
+0.896
+0.210
+150
+0.935
+0.931
+0.916
+0.654
+0.511
+0.748
+0.148
+200
+0.917
+0.916
+0.906
+0.591
+0.439
+0.725
+0.110
+250
+0.901
+0.899
+0.891
+0.537
+0.386
+0.720
+0.089
+300
+0.886
+0.885
+0.876
+0.494
+0.345
+0.714
+0.073
+350
+0.874
+0.872
+0.861
+0.458
+0.314
+0.702
+0.063
+400
+0.861
+0.860
+0.845
+0.424
+0.285
+0.686
+0.056
+150
+100
+0.985
+0.928
+0.935
+0.883
+0.851
+0.900
+0.550
+150
+0.996
+0.988
+0.983
+0.861
+0.819
+0.890
+0.426
+200
+0.971
+0.947
+0.904
+0.841
+0.794
+0.864
+0.363
+250
+0.968
+0.963
+0.902
+0.826
+0.770
+0.851
+0.313
+300
+0.964
+0.962
+0.903
+0.814
+0.751
+0.843
+0.270
+350
+0.959
+0.958
+0.897
+0.800
+0.730
+0.832
+0.241
+400
+0.954
+0.953
+0.890
+0.786
+0.711
+0.822
+0.220
+200
+100
+0.996
+0.967
+0.973
+0.937
+0.922
+0.947
+0.805
+150
+0.991
+0.961
+0.961
+0.923
+0.906
+0.934
+0.728
+200
+0.997
+0.989
+0.978
+0.915
+0.898
+0.926
+0.660
+250
+0.987
+0.952
+0.938
+0.903
+0.883
+0.914
+0.614
+300
+0.986
+0.964
+0.931
+0.897
+0.877
+0.908
+0.564
+350
+0.986
+0.976
+0.924
+0.892
+0.871
+0.903
+0.523
+400
+0.984
+0.980
+0.917
+0.887
+0.865
+0.898
+0.489
+250
+100
+0.999
+0.987
+0.990
+0.971
+0.958
+0.977
+0.902
+150
+0.998
+0.984
+0.985
+0.961
+0.946
+0.969
+0.873
+200
+0.993
+0.980
+0.979
+0.953
+0.940
+0.961
+0.847
+250
+0.997
+0.992
+0.982
+0.948
+0.935
+0.956
+0.823
+300
+0.994
+0.976
+0.968
+0.939
+0.923
+0.948
+0.792
+350
+0.994
+0.976
+0.964
+0.936
+0.921
+0.945
+0.767
+400
+0.994
+0.978
+0.959
+0.931
+0.916
+0.940
+0.744
+300
+100
+1.000
+0.995
+0.996
+0.988
+0.980
+0.991
+0.941
+150
+0.999
+0.994
+0.995
+0.983
+0.973
+0.986
+0.927
+200
+0.999
+0.993
+0.993
+0.979
+0.968
+0.984
+0.915
+250
+0.995
+0.992
+0.991
+0.975
+0.964
+0.980
+0.906
+300
+0.997
+0.996
+0.990
+0.971
+0.960
+0.977
+0.894
+350
+0.998
+0.991
+0.986
+0.967
+0.954
+0.974
+0.880
+400
+0.998
+0.990
+0.984
+0.963
+0.950
+0.970
+0.870
+350
+100
+1.000
+0.998
+0.998
+0.995
+0.992
+0.996
+0.966
+150
+1.000
+0.998
+0.998
+0.994
+0.990
+0.995
+0.957
+200
+1.000
+0.997
+0.997
+0.992
+0.985
+0.994
+0.947
+250
+0.999
+0.997
+0.997
+0.990
+0.982
+0.992
+0.941
+300
+0.996
+0.997
+0.996
+0.988
+0.980
+0.991
+0.936
+350
+0.997
+0.997
+0.995
+0.986
+0.977
+0.989
+0.931
+400
+0.999
+0.996
+0.994
+0.985
+0.974
+0.988
+0.921
+400
+100
+1.000
+0.999
+0.999
+0.998
+0.997
+0.999
+0.981
+150
+1.000
+0.999
+0.999
+0.998
+0.996
+0.998
+0.974
+200
+1.000
+0.999
+0.999
+0.997
+0.994
+0.998
+0.968
+250
+1.000
+0.999
+0.999
+0.996
+0.992
+0.997
+0.963
+300
+0.999
+0.999
+0.999
+0.996
+0.992
+0.997
+0.961
+350
+0.997
+0.999
+0.998
+0.995
+0.990
+0.996
+0.956
+400
+0.998
+0.999
+0.998
+0.994
+0.989
+0.995
+0.953
+19
+<Table 4-7>: Average of the specificity with the LASSO under AR(2) situation
+Specificity
+n
+p
+AIC
+BIC
+GIC3
+GIC4
+GIC5
+GIC6
+GIC7
+100
+100
+0.000
+0.083
+0.087
+0.994
+0.998
+0.972
+1.000
+150
+0.222
+0.487
+0.920
+0.998
+0.999
+0.994
+1.000
+200
+0.347
+0.366
+0.925
+0.999
+1.000
+0.997
+1.000
+250
+0.442
+0.446
+0.968
+0.999
+1.000
+0.998
+1.000
+300
+0.515
+0.517
+0.992
+1.000
+1.000
+0.999
+1.000
+350
+0.571
+0.573
+0.997
+1.000
+1.000
+0.999
+1.000
+400
+0.616
+0.618
+0.998
+1.000
+1.000
+0.999
+1.000
+150
+100
+0.325
+0.955
+0.946
+0.987
+0.994
+0.980
+1.000
+150
+0.000
+0.302
+0.465
+0.994
+0.997
+0.990
+1.000
+200
+0.184
+0.978
+0.986
+0.996
+0.998
+0.994
+1.000
+250
+0.272
+0.912
+0.991
+0.998
+0.999
+0.996
+1.000
+300
+0.350
+0.711
+0.993
+0.998
+0.999
+0.997
+1.000
+350
+0.414
+0.576
+0.995
+0.999
+0.999
+0.998
+1.000
+400
+0.468
+0.538
+0.996
+0.999
+1.000
+0.998
+1.000
+200
+100
+0.570
+0.952
+0.938
+0.982
+0.990
+0.976
+0.999
+150
+0.174
+0.968
+0.968
+0.991
+0.995
+0.987
+1.000
+200
+0.000
+0.643
+0.892
+0.994
+0.997
+0.992
+1.000
+250
+0.171
+0.983
+0.988
+0.996
+0.998
+0.994
+1.000
+300
+0.236
+0.986
+0.991
+0.997
+0.998
+0.996
+1.000
+350
+0.298
+0.988
+0.993
+0.998
+0.999
+0.997
+1.000
+400
+0.353
+0.982
+0.995
+0.998
+0.999
+0.997
+1.000
+250
+100
+0.635
+0.951
+0.935
+0.978
+0.986
+0.973
+0.998
+150
+0.541
+0.967
+0.965
+0.988
+0.992
+0.985
+0.999
+200
+0.072
+0.976
+0.978
+0.992
+0.995
+0.990
+1.000
+250
+0.000
+0.870
+0.981
+0.995
+0.997
+0.993
+1.000
+300
+0.167
+0.985
+0.989
+0.996
+0.998
+0.995
+1.000
+350
+0.217
+0.988
+0.992
+0.997
+0.998
+0.996
+1.000
+400
+0.268
+0.989
+0.993
+0.997
+0.998
+0.996
+1.000
+300
+100
+0.662
+0.951
+0.933
+0.976
+0.983
+0.971
+0.996
+150
+0.655
+0.967
+0.963
+0.987
+0.990
+0.983
+0.998
+200
+0.469
+0.975
+0.976
+0.991
+0.994
+0.989
+0.999
+250
+0.028
+0.980
+0.983
+0.993
+0.995
+0.992
+0.999
+300
+0.000
+0.964
+0.987
+0.995
+0.996
+0.993
+1.000
+350
+0.167
+0.987
+0.991
+0.996
+0.997
+0.995
+1.000
+400
+0.207
+0.989
+0.992
+0.997
+0.998
+0.996
+1.000
+350
+100
+0.677
+0.952
+0.933
+0.974
+0.981
+0.970
+0.995
+150
+0.698
+0.967
+0.962
+0.985
+0.989
+0.982
+0.997
+200
+0.658
+0.975
+0.975
+0.990
+0.993
+0.988
+0.999
+250
+0.360
+0.980
+0.982
+0.993
+0.995
+0.991
+0.999
+300
+0.012
+0.984
+0.986
+0.994
+0.996
+0.993
+0.999
+350
+0.000
+0.984
+0.989
+0.995
+0.997
+0.994
+1.000
+400
+0.168
+0.989
+0.992
+0.996
+0.997
+0.995
+1.000
+400
+100
+0.686
+0.953
+0.933
+0.974
+0.981
+0.970
+0.993
+150
+0.717
+0.968
+0.962
+0.985
+0.988
+0.982
+0.996
+200
+0.717
+0.976
+0.975
+0.989
+0.992
+0.988
+0.998
+250
+0.633
+0.981
+0.982
+0.992
+0.994
+0.991
+0.999
+300
+0.235
+0.984
+0.986
+0.994
+0.995
+0.992
+0.999
+350
+0.006
+0.986
+0.989
+0.995
+0.996
+0.994
+0.999
+400
+0.000
+0.988
+0.991
+0.996
+0.997
+0.995
+0.999
+20
+<Table 4-8>: Average of the specificity with the SCAD under AR(2) situation
+Specificity
+n
+p
+AIC
+BIC
+GIC3
+GIC4
+GIC5
+GIC6
+GIC7
+100
+100
+0.007
+0.045
+0.046
+0.925
+0.996
+0.498
+1.000
+150
+0.461
+0.491
+0.559
+0.994
+0.998
+0.981
+1.000
+200
+0.577
+0.593
+0.627
+0.996
+0.999
+0.962
+1.000
+250
+0.654
+0.669
+0.696
+0.997
+0.999
+0.947
+1.000
+300
+0.708
+0.722
+0.749
+0.998
+0.999
+0.942
+1.000
+350
+0.748
+0.761
+0.789
+0.998
+1.000
+0.944
+1.000
+400
+0.777
+0.789
+0.820
+0.999
+1.000
+0.948
+1.000
+150
+100
+0.375
+0.965
+0.955
+0.989
+0.994
+0.984
+1.000
+150
+0.007
+0.102
+0.159
+0.993
+0.996
+0.909
+1.000
+200
+0.456
+0.687
+0.933
+0.995
+0.998
+0.993
+1.000
+250
+0.537
+0.592
+0.887
+0.996
+0.998
+0.995
+1.000
+300
+0.602
+0.627
+0.875
+0.997
+0.999
+0.996
+1.000
+350
+0.652
+0.670
+0.887
+0.998
+0.999
+0.996
+1.000
+400
+0.692
+0.707
+0.902
+0.998
+0.999
+0.997
+1.000
+200
+100
+0.476
+0.973
+0.964
+0.990
+0.994
+0.986
+0.999
+150
+0.308
+0.981
+0.981
+0.994
+0.997
+0.992
+1.000
+200
+0.007
+0.201
+0.403
+0.996
+0.998
+0.993
+1.000
+250
+0.471
+0.951
+0.991
+0.997
+0.998
+0.996
+1.000
+300
+0.529
+0.808
+0.993
+0.998
+0.999
+0.997
+1.000
+350
+0.579
+0.707
+0.993
+0.998
+0.999
+0.997
+1.000
+400
+0.622
+0.685
+0.993
+0.998
+0.999
+0.998
+1.000
+250
+100
+0.539
+0.977
+0.969
+0.990
+0.994
+0.987
+0.999
+150
+0.407
+0.983
+0.982
+0.994
+0.997
+0.992
+1.000
+200
+0.258
+0.987
+0.988
+0.996
+0.998
+0.994
+1.000
+250
+0.008
+0.329
+0.674
+0.997
+0.998
+0.996
+1.000
+300
+0.491
+0.990
+0.994
+0.998
+0.999
+0.997
+1.000
+350
+0.533
+0.974
+0.995
+0.998
+0.999
+0.997
+1.000
+400
+0.573
+0.916
+0.996
+0.998
+0.999
+0.998
+1.000
+300
+100
+0.587
+0.981
+0.974
+0.990
+0.994
+0.988
+0.999
+150
+0.461
+0.985
+0.984
+0.994
+0.996
+0.992
+0.999
+200
+0.365
+0.988
+0.989
+0.996
+0.997
+0.994
+1.000
+250
+0.220
+0.990
+0.992
+0.997
+0.998
+0.996
+1.000
+300
+0.008
+0.490
+0.891
+0.997
+0.998
+0.997
+1.000
+350
+0.511
+0.993
+0.995
+0.998
+0.999
+0.997
+1.000
+400
+0.542
+0.993
+0.996
+0.998
+0.999
+0.998
+1.000
+350
+100
+0.624
+0.985
+0.979
+0.991
+0.994
+0.989
+0.999
+150
+0.509
+0.988
+0.986
+0.994
+0.996
+0.993
+0.999
+200
+0.416
+0.990
+0.990
+0.995
+0.997
+0.995
+1.000
+250
+0.333
+0.991
+0.992
+0.996
+0.998
+0.996
+1.000
+300
+0.188
+0.992
+0.994
+0.997
+0.998
+0.996
+1.000
+350
+0.008
+0.636
+0.974
+0.998
+0.999
+0.997
+1.000
+400
+0.529
+0.994
+0.996
+0.998
+0.999
+0.998
+1.000
+400
+100
+0.654
+0.988
+0.983
+0.992
+0.995
+0.991
+0.999
+150
+0.548
+0.990
+0.989
+0.995
+0.997
+0.994
+1.000
+200
+0.452
+0.992
+0.991
+0.996
+0.997
+0.995
+1.000
+250
+0.386
+0.993
+0.993
+0.997
+0.998
+0.996
+1.000
+300
+0.305
+0.994
+0.994
+0.997
+0.998
+0.997
+1.000
+350
+0.162
+0.994
+0.995
+0.998
+0.999
+0.997
+1.000
+400
+0.009
+0.774
+0.994
+0.998
+0.999
+0.998
+1.000
+21
+<Figure 4-1> Sensitivity of AIC, BIC, and GIC3 when sample size =
+100,200,300, and 400 in the Model 1
+22
+<Figure 4-2> Sensitivity of GIC4, GIC5, GIC6, and GIC7 when sample size =
+100,200,300, and 400 in the Model 1
+23
+<Figure 4-3> Specificity of AIC, BIC, and GIC3 when sample size = 100,200,300,
+and 400 in the Model 1
+24
+<Figure 4-4> Specificity of GIC4, GIC5, GIC6, and GIC7 when sample size =
+100,200,300, and 400 in the Model 1
+25
+<Figure 4-5> Sensitivity of AIC, BIC, and GIC3 when sample size =
+100,200,300, and 400 in the AR(2) model
+26
+<Figure 4-6> Sensitivity of GIC4, GIC5, GIC6, and GIC7 when sample size =
+100,200,300, and 400 in the AR(2) model
+27
+<Figure 4-7> Specificity of AIC, BIC, and GIC3 when sample size = 100,200,300,
+and 400 in the AR(2) model
+28
+<Figure 4-8> Specificity of GIC4, GIC5, GIC6, and GIC7 when sample size =
+100,200,300, and 400 in the AR(2) model
+29
+Chapter 5. Conclusion
+In this paper, we studied diverse model selection criteria based on the GIC for
+the neighborhood selection by the simulation study. Depending on the n and
+p, the GICs indicate different results and patterns in terms of sensitivity and
+specificity. The advantage of comparison of various model selection criteria
+lies in its diversity of choices about how to select the tuning parameters under
+the specific n and p. However, there is a lack of theoretical properties about
+the selection consistency for the GGMs. And this study is limited to the neigh-
+borhood selection method. We believe that comparison of GICs for another
+penalized estimator, for example GLASSO, is valuable.
+30
+References
+Abbruzzo, A., Vujaˇci´c, I., Mineo, A. M., and Wit, E. C. (2019). Selecting the tun-
+ing parameter in penalized Gaussian graphical models.Statistics and Comput-
+ing, 29(3):559-569.
+Akaike, H. (1998). Information theory and an extension of the maximum like-
+lihood principle. Selected papers of hirotugu akaike, 199-213.
+Banerjee, O., El Ghaoui, L., and d’Aspremont, A. (2008). Model selection
+through sparse maximum likelihood estimation for multivariate Gaussian
+or binary data. The Journal of Machine Learning Research, 9:485-516.
+Bühlmann, P., and Van De Geer, S. (2011). Statistics for high-dimensional data:
+methods, theory and applications, Springer Science and Business Media.
+Cai, T. T., Liu, W., and Luo, X. (2011). A Constrained L1 Minimization Ap-
+proach to Sparse Precision Matrix Estimation. Journal of the American Statis-
+tical Association, 106(494):594-607.
+Cai, T. T., Liu, W., and Zhou, H. H. (2016). Estimating sparse precision ma-
+trix: Optimal rates of convergence and adaptive estimation. The Annals of
+Statistics, 44(2):455-488.
+Dempster, A. P. Covariance selection. Biometrics, 157-175.
+Drton, M., and Maathuis, M. H. (2017). Structure learning in graphical model-
+ing. Annual Review of Statistics and Its Application, 4:365-393.
+Fan, J., Feng, Y., and Wu, Y. (2009). Network exploration via the adaptive
+LASSO and SCAD penalties. The annals of applied statistics, 3(2):521.
+Foygel, R., and Drton, M. (2010). Extended Bayesian information criteria for
+Gaussian graphical models.Advances in neural information processing systems,
+23.
+31
+Friedman, J., Hastie, T., and Tibshirani, R. (2008). Sparse inverse covariance
+estimation with the graphical lasso. Biostatistics, 9(3):432-441.
+Gao, X., Pu, D. Q., Wu, Y., and Xu, H. (2012). Tuning parameter selection for pe-
+nalized likelihood estimation of Gaussian graphical model. Statistica Sinica,
+1123-1146.
+Kim, Y., Kwon, S., and Choi, H. (2012). Consistent model selection criteria on
+high dimensions. The Journal of Machine Learning Research, 13:1037-1057.
+Konishi, S., and Kitagawa, G. (1996). Generalised information criteria in model
+selection. Biometrika, 83(4):875-890.
+Lauritzen, S. L. (1996). Graphical models, Oxford University Press, Oxford.
+Liu, H., and Wang, L. (2017). TIGER: A tuning-insensitive approach for opti-
+mally estimating Gaussian graphical models. Electronic Journal of Statistics,
+11:241-294.
+Maathuis, M., Drton, M., Lauritzen, S., and Wainwright, M. (Eds.). (2018).
+Handbook of graphical models, CRC Press, Inc., USA.
+Mazumder, R., and Hastie, T. (2012). The graphical LASSO: New insights and
+alternatives. Electronic journal of statistics, 6:2125.
+Meinshausen, N., and Bühlmann, P. (2006). High-dimensional graphs and
+variable selection with the lasso. The Annals of Statistics, 34(3):1436-1462.
+Peng, J., Wang, P., Zhou, N., and Zhu, J. (2009). Partial correlation estimation
+by joint sparse regression models. Journal of the American Statistical Associa-
+tion, 104(486):735-746.
+Schwarz, G. (1978). Estimating the dimension of a model. The annals of statistics,
+461-464.
+Tibshirani, R. (1996). Regression shrinkage and selection via the Lasso. Journal
+of the Royal Statistical Society Series B: Statistical Methodology, 58(1):267-288.
+Uhler, C. (2017). Gaussian graphical models: An algebraic and geometric per-
+spective. arXiv preprint arXiv:1707.04345
+32
+Wang, L., Ren, X., and Gu, Q. (2016). Precision Matrix Estimation in High Di-
+mensional Gaussian Graphical Models with Faster Rates. International Con-
+ference on Artificial Intelligence and Statistics, 177-185.
+Yuan, M. (2010). High dimensional inverse covariance matrix estimation via
+linear programming.The Journal of Machine Learning Research, 11:2261-2286.
+Yuan, M., and Lin, Y. (2007). Model selection and estimation in the Gaussian
+graphical model. Biometrika, 94(1):19-35.
+33
+Abstract(in Korean)
+가우스그래프모형에서이웃선택방법의모형선택
+기준에대한비교
+고건
+응용통계학과
+건국대학교대학원
+일반적으로고차원상황에서가우스그래프모형을추정하기위해서벌점추
+정기가사용된다. 대표적인추정기가이웃선택방법이다. 이웃선택방식은벌점
+회귀기반의방식이기때문에매개변수조정에대한모형선택문제가있다. 본논문
+에서는가우스그래프모형에서이웃선택방식에대해일반화정보기준에기반한
+다양한모형선택기준을시뮬레이션연구를통해비교한다.
+주제어: 가우스그래피컬모형, 모형선택기준, 이웃선택방법.
+34
