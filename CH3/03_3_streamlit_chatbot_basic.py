@@ -57,7 +57,7 @@ if prompt := st.chat_input("Gemini에게 물어보기"):
         message_placeholder = st.empty()
         full_response = ""
         
-        # 6. Gemini 스트리밍 호출
+        # 6. Gemini 
         try:
             # 과거 대화 기록
             history = [
@@ -68,15 +68,16 @@ if prompt := st.chat_input("Gemini에게 물어보기"):
             ]
             
             # 응답 생성
-            response = st.session_state.client.models.generate_content(
+            chat = st.session_state.client.chats.create(
                 model='gemini-2.5-flash',
-                contents=prompt,
+                history=history,
                 config=types.GenerateContentConfig(
                     temperature=0.7
-                ),
-                history=history # 이전 대화 맥락 전달
+                )
             )
-          
+
+            response = chat.send_message(prompt)
+            
             full_response = response.text
             message_placeholder.markdown(full_response)
             
