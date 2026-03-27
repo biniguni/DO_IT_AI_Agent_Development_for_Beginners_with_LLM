@@ -22,11 +22,11 @@ if "messages" not in st.session_state:
 
 if "client" not in st.session_state:
     if GOOGLE_API_KEY:
-        # 여기서 client를 생성해서 session_state에 딱 등록합니다.
+        # client 생성 session_state에 등록
         st.session_state.client = genai.Client(api_key=GOOGLE_API_KEY)
     else:
         st.warning("API 키가 필요합니다. .env 파일을 확인하거나 사이드바에 입력해주세요.")
-        st.stop() # 키가 없으면 여기서 실행 중단!
+        st.stop() # 키가 없으면 실행 중단
 
 
 st.title("Chat Bot")
