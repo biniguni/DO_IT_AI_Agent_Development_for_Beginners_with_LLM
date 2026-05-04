@@ -5,5 +5,15 @@ def get_current_time():
     print(now_date)
     return now_date
 
+tools = [
+    {
+        "type" : "function",
+        "function" : {
+            "name" : "get_current_time",
+            "descriptsion" : "현재 날짜와 시간 반환",
+        }
+    },
+]
+
 if __name__ == '__main__':
     get_current_time()
